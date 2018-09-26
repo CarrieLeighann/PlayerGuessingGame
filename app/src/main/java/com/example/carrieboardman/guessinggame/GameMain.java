@@ -3,6 +3,7 @@ package com.example.carrieboardman.guessinggame;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -23,11 +24,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 public class GameMain extends AppCompatActivity {
 
     String urlString = "https://gist.githubusercontent.com/liamjdouglas/bb40ee8721f1a9313c22c6ea0851a105/r\n" +
             "aw/6b6fc89d55ebe4d9b05c1469349af33651d7e7f1/Player.json";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,7 @@ public class GameMain extends AppCompatActivity {
         setContentView(R.layout.activity_game_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         try {
             URL url = new URL(urlString);
@@ -49,8 +54,6 @@ public class GameMain extends AppCompatActivity {
     }
 
 
-
-
     private Boolean isNetworkConnected(){
         ConnectivityManager connManager =
                 (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -60,6 +63,8 @@ public class GameMain extends AppCompatActivity {
         }
         return false;
     }
+
+
 
     private class GetPlayers extends AsyncTask<URL, String, String>{
 
@@ -88,7 +93,6 @@ public class GameMain extends AppCompatActivity {
 
                 int responseCode = urlConnection.getResponseCode();
 
-                Log.d("RESULT", "IS" + responseCode);
                 if (responseCode == HttpURLConnection.HTTP_OK){
                     InputStream in = urlConnection.getInputStream();
 
@@ -124,8 +128,9 @@ public class GameMain extends AppCompatActivity {
             try {
                 JSONObject res = new JSONObject(s);
                 JSONArray players = res.getJSONArray("players");
-                Log.d("RESULT", players.toString());
-                Log.d("RESULT", String.valueOf(players.length()));
+
+                new PlayerArrayHandler(players);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -2,6 +2,7 @@
     <string name="app_name">GuessingGame</string>
     <string name="welcome">Welcome! \n To begin the game press button</string>
     <string name="go">Go!</string>
+    <string name="which_player">Which player has the highest FPPG?</string>
     <string name="title_activity_game_main">GameMain</string>
 
     <!-- TODO: Remove or change this placeholder text -->
