@@ -4,6 +4,10 @@
     <string name="go">Go!</string>
     <string name="which_player">Which player has the highest FPPG?</string>
     <string name="title_activity_game_main">GameMain</string>
+    <string name ="score">Score: </string>
+
+    <string name = "correct"> Correct!</string>
+    <string name = "wrong"> Sorry, wrong choice!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
