@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
     public AsyncResult callback = null;
 
     private WeakReference<Context> context;
+
 
     private Boolean isNetworkConnected(){
         Context ctx = context.get();
@@ -45,6 +47,7 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
         }
     }
 
+    //TODO: ERROR HANDLE WHEN RESULT IS RETURNED AS NULL
     @Override
     protected String doInBackground(URL... params) {
 
@@ -67,6 +70,7 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
 
                 if (in != null){
 
+
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
                     StringBuilder sb = new StringBuilder();
                     String line = "";
@@ -78,6 +82,8 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
                     result = sb.toString();
                     in.close();
                 }
+            } else {
+                return result;
             }
             urlConnection.disconnect();
 

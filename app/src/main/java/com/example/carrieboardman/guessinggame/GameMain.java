@@ -1,6 +1,7 @@
 package com.example.carrieboardman.guessinggame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -9,12 +10,17 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,9 +38,8 @@ import java.util.HashMap;
 
 public class GameMain extends AppCompatActivity implements AsyncResult{
 
-    String urlString = "https://gist.githubusercontent.com/liamjdouglas/bb40ee8721f1a9313c22c6ea0851a105/r\n" +
+    static String URL_STRING = "https://gist.githubusercontent.com/liamjdouglas/bb40ee8721f1a9313c22c6ea0851a105/r\n" +
             "aw/6b6fc89d55ebe4d9b05c1469349af33651d7e7f1/Player.json";
-
 
     private PlayerArrayHandler handler;
 
@@ -43,7 +48,12 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
 
     TextView playerOneText; TextView playerTwoText;
     TextView playerOneFPPG; TextView playerTwoFPPG;
+    TextView result;
 
+
+    CardView playerOne; CardView playerTwo;
+
+    Button next;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +62,29 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(GameMain.this, Home.class));
+                finish();
+            }
+        });
 
         playerOneText = (TextView) findViewById(R.id.player_one);
         playerTwoText = (TextView) findViewById(R.id.player_two);
         playerOneFPPG = (TextView) findViewById(R.id.fppg_p1);
         playerTwoFPPG = (TextView) findViewById(R.id.fppg_p2);
+        result = (TextView) findViewById(R.id.result);
+
+        playerOne = findViewById(R.id.player_one_option);
+        playerTwo = findViewById(R.id.player_two_option);
+
+        next = findViewById(R.id.nextPlayer);
+
+        next.setClickable(false);
 
         try {
-            URL url = new URL(urlString);
+            URL url = new URL(URL_STRING);
 
             AsyncGetPlayers get = new AsyncGetPlayers(this);
 
@@ -70,7 +95,6 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void processJson(String s) {
@@ -83,21 +107,47 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
             currentGame = new Game();
             currentGame.setPlayerArray(handler.processPlayers(res));
 
-            displayPlayers();
+            newTurn();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
+    private void newTurn() {
 
-    private void displayPlayers() {
+        if (!this.currentGame.isLastTurn()) {
 
-        this.currentGame.setCurrentPlayers();
-        this.playerOneText.setText((this.currentGame.getCurrentPlayers()[0]).getPlayerName());
-        this.playerTwoText.setText((this.currentGame.getCurrentPlayers()[1]).getPlayerName());
-        this.playerOneFPPG.setText(String.valueOf((this.currentGame.getCurrentPlayers()[0]).getFppg()));
-        this.playerTwoFPPG.setText(String.valueOf((this.currentGame.getCurrentPlayers()[1]).getFppg()));
+            this.currentGame.setCurrentPlayers();
+
+            Picasso.get().load(this.currentGame.getCurrentPlayers()[0].getImage()).into((ImageView) findViewById(R.id.p1_image));
+            Picasso.get().load(this.currentGame.getCurrentPlayers()[1].getImage()).into((ImageView) findViewById(R.id.p2_image));
+            this.playerOneText.setText((this.currentGame.getCurrentPlayers()[0]).getPlayerName());
+            this.playerTwoText.setText((this.currentGame.getCurrentPlayers()[1]).getPlayerName());
+            this.playerOneFPPG.setText(String.valueOf((this.currentGame.getCurrentPlayers()[0]).getFppg()));
+            this.playerTwoFPPG.setText(String.valueOf((this.currentGame.getCurrentPlayers()[1]).getFppg()));
+
+        } else {
+          /*  this.result.setVisibility(View.VISIBLE);
+            this.result.setText("End of game");*/
+
+          Intent backHome = new Intent(this, Home.class);
+          backHome.putExtra("SCORE", this.currentGame.getScore());
+
+          startActivity(backHome);
+
+        }
+    }
+
+    private void resetUI() {
+        this.playerOneFPPG.setVisibility(View.GONE);
+        this.playerTwoFPPG.setVisibility(View.GONE);
+        this.result.setVisibility(View.GONE);
+
+        this.playerOne.setClickable(true);
+        this.playerTwo.setClickable(true);
+
+        findViewById(R.id.nextPlayer).setClickable(false);
+        this.next.setTextColor(ResourcesCompat.getColor(getResources(), R.color.disabled, null));
     }
 
     public void playerChosen(View view) {
@@ -118,25 +168,29 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
                 break;
         }
 
-        TextView result = (TextView) findViewById(R.id.result);
-        result.setVisibility(View.VISIBLE);
+
+        this.result.setVisibility(View.VISIBLE);
 
         if (chosenPlayer.equals(correctPlayer.getPlayerName())){
 
             result.setText(getResources().getString(R.string.correct));
-            result.setTextColor(getResources().getColor(R.color.correctGreen));
+            result.setTextColor(ResourcesCompat.getColor(getResources(), R.color.correctGreen, null));
             this.currentGame.incrementScore();
             ((TextView) findViewById(R.id.score)).setText(String.valueOf(this.currentGame.getScore()));
         }else {
             result.setText(getResources().getString(R.string.wrong));
-            result.setTextColor(getResources().getColor(R.color.incorrectRed));
+            result.setTextColor(ResourcesCompat.getColor(getResources(), R.color.incorrectRed, null));
         }
 
-        newTurn();
+        this.playerOne.setClickable(false);
+        this.playerTwo.setClickable(false);
+
+       this.next.setClickable(true);
+       this.next.setTextColor(ResourcesCompat.getColor(getResources(), R.color.black, null));
     }
 
-    private void newTurn() {
-
-
+    public void nextClicked(View view) {
+        resetUI();
+        newTurn();
     }
 }

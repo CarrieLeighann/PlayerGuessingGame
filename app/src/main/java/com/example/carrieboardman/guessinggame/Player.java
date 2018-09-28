@@ -1,9 +1,12 @@
 package com.example.carrieboardman.guessinggame;
 
+import java.net.URL;
+
 public class Player {
 
     private String playerName;
     private Double fppg;
+    private String image;
 
     public Player() {
     }
@@ -22,5 +25,13 @@ public class Player {
 
     public void setFppg(Double fppg) {
         this.fppg = fppg;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

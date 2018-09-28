@@ -1,11 +1,16 @@
 package com.example.carrieboardman.guessinggame;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 
 public class Game {
 
+
+    static final int GAME_ITERATIONS = 10;
+    static final int PLAYERS_SHOWN = 2;
 
     private int playerIndex;
     private int score;
@@ -15,6 +20,8 @@ public class Game {
     private ArrayList<Player> playerArray;
 
     private PlayerArrayHandler handler;
+
+
 
     public ArrayList<Player> getPlayerArray() {
         return playerArray;
@@ -30,6 +37,7 @@ public class Game {
         this.score = 0;
 
         handler = new PlayerArrayHandler();
+
 
     }
 
@@ -66,7 +74,16 @@ public class Game {
     public void setCorrectAnswer() {
 
         int index = this.handler.higherScoreCalc(this);
-        this.correctAnswer = this.playerArray.get(index);
+        this.correctAnswer = this.getCurrentPlayers()[index];
 
+    }
+
+    public Boolean isLastTurn(){
+        int arraySize = this.getPlayerArray().size();
+        if (arraySize % 2 == 0){
+            return this.getPlayerNo() == arraySize;
+        } else {
+            return this.getPlayerNo() + 1 == arraySize;
+        }
     }
 }

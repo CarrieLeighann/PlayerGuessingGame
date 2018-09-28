@@ -6,4 +6,7 @@
 
     <color name="correctGreen">#1a832c</color>
     <color name="incorrectRed">#892424</color>
+
+    <color name = "black">#000000</color>
+    <color name = "disabled">#e7e4e4</color>
 </resources>

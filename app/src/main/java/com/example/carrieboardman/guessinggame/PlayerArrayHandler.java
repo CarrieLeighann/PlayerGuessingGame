@@ -16,7 +16,7 @@ public class PlayerArrayHandler {
 
     }
 
-    public Boolean differentScores (Player p1, Player p2){
+    public Boolean hasDifferentScores (Player p1, Player p2){
         return !p1.getFppg().equals(p2.getFppg());
 
     }
