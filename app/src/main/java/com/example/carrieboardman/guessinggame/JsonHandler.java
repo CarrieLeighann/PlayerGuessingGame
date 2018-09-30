@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/* This class simply processes the JSON which is received and translates it to
+an array of Player objects which the Game class can use*/
 public class JsonHandler {
 
 
@@ -28,6 +30,7 @@ public class JsonHandler {
 
             Double score = playerObject.optDouble("fppg");
 
+            //one of the results in the JSON was null, so this should be caught at this point and not added to the array
             if (!(score.isNaN())) {
                 Player newPlayer = new Player();
 

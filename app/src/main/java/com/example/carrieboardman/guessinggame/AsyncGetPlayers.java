@@ -27,6 +27,7 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
     private WeakReference<Context> context;
 
 
+    //this methods determines whether the device has an internet connection
     private Boolean isNetworkConnected(){
 
         Context ctx = context.get();
@@ -40,6 +41,7 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
     }
 
 
+    //if no internet connection, cancel the operation
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -65,13 +67,16 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
 
             int responseCode = urlConnection.getResponseCode();
 
+            //checks to see if connection was succssful
             if (responseCode == HttpURLConnection.HTTP_OK){
+
                 InputStream in = urlConnection.getInputStream();
 
                 if (in != null){
 
-
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+                    //builds string from input stream
                     StringBuilder sb = new StringBuilder();
                     String line = "";
 
@@ -99,9 +104,7 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-
         callback.processJson(s);
-
     }
 
     @Override

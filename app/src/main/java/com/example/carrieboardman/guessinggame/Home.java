@@ -13,17 +13,17 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
+        //if the user has completed a full game, their score is returned from the GameMain activity and displayed
         Bundle bundle = this.getIntent().getExtras();
 
+        //if they did not complete the game, the bundle will be empty
        if (!(bundle == null)){
            int score = bundle.getInt("SCORE");
 
            String message = getResources().getString(R.string.your_score) + " " + String.valueOf(score) + " out of " + Game.GAME_ITERATIONS + "\n " + getResources().getString(R.string.new_game);
            ((TextView) findViewById(R.id.welcome_text)).setText(message);
        }
-
-
-
 
     }
 

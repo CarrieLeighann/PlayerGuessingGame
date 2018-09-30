@@ -89,6 +89,7 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
 
         next.setClickable(false);
 
+        //calls AsyncTask to download JSON DATA
         try {
             URL url = new URL(URL_STRING);
 
@@ -102,6 +103,7 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
         }
     }
 
+    //callback method from AsyncGetPlayers with the downloaded JSON data
     @Override
     public void processJson(String s) {
 
@@ -110,9 +112,11 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
 
             JsonHandler handler = new JsonHandler();
 
+            //create new instance of game and provide the data to it
             currentGame = new Game();
             currentGame.setPlayerArray(handler.processPlayers(res));
 
+            //begin first user turn
             newTurn();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -120,6 +124,7 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
         }
     }
 
+    //callback method if AsyncTask is cancelled
     @Override
     public void onCancel() {
      createErrorDialog(0);
@@ -128,6 +133,8 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
 
     public void createErrorDialog(int errorType){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        //different messages shown depending on error type
         if (errorType == NO_INTERNET){
             builder.setMessage(R.string.no_internet)
                     .setTitle(R.string.no_internet_title);
@@ -135,7 +142,6 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
             builder.setMessage(R.string.problem)
                     .setTitle(R.string.error);
         }
-
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -147,12 +153,17 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
+    /* On each new turn, the app checks first that the user has not reached their last turn of the game,
+    * before setting up the UI with the relevant player info*/
     private void newTurn() {
 
         if (!this.currentGame.isLastTurn()) {
 
             this.currentGame.getNextPlayers();
 
+            //uses Picasso library to load and display the player images
             Picasso.get().load(this.currentGame.getCurrentPlayers()[0].getImage()).into((ImageView) findViewById(R.id.p1_image));
             Picasso.get().load(this.currentGame.getCurrentPlayers()[1].getImage()).into((ImageView) findViewById(R.id.p2_image));
             this.playerOneText.setText((this.currentGame.getCurrentPlayers()[0]).getPlayerName());
@@ -161,9 +172,8 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
             this.playerTwoFPPG.setText(String.valueOf((this.currentGame.getCurrentPlayers()[1]).getFppg()));
 
         } else {
-          /*  this.result.setVisibility(View.VISIBLE);
-            this.result.setText("End of game");*/
 
+            //if the user has had their last turn, they are returned to the home page
           Intent backHome = new Intent(this, Home.class);
           backHome.putExtra("SCORE", this.currentGame.getScore());
 
@@ -172,6 +182,7 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
         }
     }
 
+    //after each turn, the UI is reset so that the user cannot click next, and FPPGs and the result message is hidden from view
     private void resetUI() {
         this.playerOneFPPG.setVisibility(View.GONE);
         this.playerTwoFPPG.setVisibility(View.GONE);
@@ -184,6 +195,8 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
         this.next.setTextColor(ResourcesCompat.getColor(getResources(), R.color.disabled, null));
     }
 
+
+    //callback when a user selects on of the players
     public void playerChosen(View view) {
 
        this.playerOneFPPG.setVisibility(View.VISIBLE);
@@ -202,7 +215,7 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
                 break;
         }
 
-
+        //displays whether the user was successful or not
         this.result.setVisibility(View.VISIBLE);
 
         if (chosenPlayer.equals(correctPlayer.getPlayerName())){
@@ -217,6 +230,8 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
         }
 
         this.currentGame.incrementTurns();
+
+        //ensures the player can only select one player per turn
         this.playerOne.setClickable(false);
         this.playerTwo.setClickable(false);
 
@@ -224,6 +239,7 @@ public class GameMain extends AppCompatActivity implements AsyncResult{
        this.next.setTextColor(ResourcesCompat.getColor(getResources(), R.color.black, null));
     }
 
+    //clicking the next button resets the UI and triggers a new turn
     public void nextClicked(View view) {
         resetUI();
         newTurn();

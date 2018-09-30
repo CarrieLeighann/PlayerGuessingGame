@@ -25,16 +25,9 @@ public class Game {
 
         handler = new PlayerArrayHandler();
 
-        this.setTurns();
+       this.turns = 0;
     }
 
-    private void setTurns() {
-        this.turns = 0;
-    }
-
-    public void incrementTurns(){
-        this.turns++;
-    }
 
     public ArrayList<Player> getPlayerArray() {
         return playerArray;
@@ -46,6 +39,10 @@ public class Game {
 
     public int getPlayerIndex() {
         return playerIndex;
+    }
+
+    public void incrementTurns(){
+        this.turns++;
     }
 
     public void incrementScore(){
@@ -60,10 +57,8 @@ public class Game {
         return this.score;
     }
 
-    public Player[] getCurrentPlayers() {
-        return currentPlayers;
-    }
 
+    //call the handler to find the next players in the list and set the correct answer
     public void getNextPlayers(){
         setCurrentPlayers(this.handler.getNextPlayers(this));
         setCorrectAnswer(this.findCorrectAnswer());
@@ -73,20 +68,28 @@ public class Game {
         this.currentPlayers = currentPlayers;
     }
 
+    //call the handler to find out which player has the higher score
+    // and is the correct answer in this turn
     protected Player findCorrectAnswer() {
         int index = this.handler.higherScoreCalc(this.currentPlayers);
         return this.getCurrentPlayers()[index];
+    }
+
+    public Player[] getCurrentPlayers() {
+        return currentPlayers;
     }
 
     public Player getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(Player correctAnswer){
+    private void setCorrectAnswer(Player correctAnswer){
         this.correctAnswer = correctAnswer;
     }
 
     public Boolean isLastTurn(){
+        //THIS CODE WOULD BE IF THERE WAS NO SET LIMIT TO THE NUMBER OF TURNS
+        //THE PLAYER COULD HAVE AND IT WAS INSTEAD BASED ON DATA SIZE
      /*   int arraySize = this.getPlayerArray().size();
         if (arraySize % PLAYERS_SHOWN == 0){
             return this.getPlayerNo() == arraySize;
