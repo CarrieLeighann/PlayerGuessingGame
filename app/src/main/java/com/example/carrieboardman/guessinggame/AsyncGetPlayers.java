@@ -28,6 +28,7 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
 
 
     private Boolean isNetworkConnected(){
+
         Context ctx = context.get();
         ConnectivityManager connManager =
                 (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -47,7 +48,6 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
         }
     }
 
-    //TODO: ERROR HANDLE WHEN RESULT IS RETURNED AS NULL
     @Override
     protected String doInBackground(URL... params) {
 
@@ -104,4 +104,9 @@ public class AsyncGetPlayers extends AsyncTask<URL, String, String> {
 
     }
 
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        callback.onCancel();
+    }
 }

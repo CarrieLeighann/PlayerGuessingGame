@@ -21,8 +21,7 @@ public class PlayerArrayHandler {
 
     }
 
-    public int higherScoreCalc (Game game) {
-        Player[] curr = game.getCurrentPlayers();
+    public int higherScoreCalc (Player[] curr) {
         if (curr[0].getFppg() > curr[1].getFppg()) {
             return 0;
         } else {
@@ -34,7 +33,7 @@ public class PlayerArrayHandler {
     public Player[] getNextPlayers (Game game){
         Player[] players = new Player[2];
         for (int i = 0; i < 2; i++){
-            players[i] = game.getPlayerArray().get(game.getPlayerNo());
+            players[i] = game.getPlayerArray().get(game.getPlayerIndex());
             game.incrementPlayerNo();
         }
 

@@ -1,9 +1,5 @@
 package com.example.carrieboardman.guessinggame;
 
-import android.util.Log;
-
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 
 public class Game {
@@ -14,6 +10,7 @@ public class Game {
 
     private int playerIndex;
     private int score;
+    private int turns;
 
     private Player[] currentPlayers;
     private Player correctAnswer;
@@ -21,7 +18,23 @@ public class Game {
 
     private PlayerArrayHandler handler;
 
+    public Game( ) {
+        this.playerIndex = 0;
 
+        this.score = 0;
+
+        handler = new PlayerArrayHandler();
+
+        this.setTurns();
+    }
+
+    private void setTurns() {
+        this.turns = 0;
+    }
+
+    public void incrementTurns(){
+        this.turns++;
+    }
 
     public ArrayList<Player> getPlayerArray() {
         return playerArray;
@@ -31,14 +44,8 @@ public class Game {
         this.playerArray = playerArray;
     }
 
-    public Game( ) {
-        this.playerIndex = 0;
-
-        this.score = 0;
-
-        handler = new PlayerArrayHandler();
-
-
+    public int getPlayerIndex() {
+        return playerIndex;
     }
 
     public void incrementScore(){
@@ -53,37 +60,40 @@ public class Game {
         return this.score;
     }
 
-
-    public int getPlayerNo(){
-        return this.playerIndex;
-    }
-
     public Player[] getCurrentPlayers() {
         return currentPlayers;
     }
 
-    public void setCurrentPlayers() {
-        this.currentPlayers = this.handler.getNextPlayers(this);
-        this.setCorrectAnswer();
+    public void getNextPlayers(){
+        setCurrentPlayers(this.handler.getNextPlayers(this));
+        setCorrectAnswer(this.findCorrectAnswer());
+    }
+
+    public void setCurrentPlayers(Player [] currentPlayers) {
+        this.currentPlayers = currentPlayers;
+    }
+
+    protected Player findCorrectAnswer() {
+        int index = this.handler.higherScoreCalc(this.currentPlayers);
+        return this.getCurrentPlayers()[index];
     }
 
     public Player getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer() {
-
-        int index = this.handler.higherScoreCalc(this);
-        this.correctAnswer = this.getCurrentPlayers()[index];
-
+    public void setCorrectAnswer(Player correctAnswer){
+        this.correctAnswer = correctAnswer;
     }
 
     public Boolean isLastTurn(){
-        int arraySize = this.getPlayerArray().size();
-        if (arraySize % 2 == 0){
+     /*   int arraySize = this.getPlayerArray().size();
+        if (arraySize % PLAYERS_SHOWN == 0){
             return this.getPlayerNo() == arraySize;
         } else {
             return this.getPlayerNo() + 1 == arraySize;
-        }
+        }*/
+
+        return turns == GAME_ITERATIONS;
     }
 }
